@@ -1,3 +1,5 @@
+//Refs: https://www.hackerrank.com/challenges/ctci-balanced-brackets
+
 import java.io.*;
 import java.util.*;
 import java.text.*;
@@ -29,7 +31,7 @@ public class Solution {
         public Node pop() {
             size--;
             Node node = top;
-            top = top.next;
+	    if (top != null) top = top.next;
             return node;
         }
     }
@@ -58,6 +60,7 @@ public class Solution {
             } else {
                 //Then it's a closing bracket. If it doesn't pair with the top of the stack, fail
                 Node top = stack.pop();
+		if (top == null) return false;
                 if (!((top.value.equals("[") && bracket.equals("]")) || (top.value.equals("{") && bracket.equals("}")) || (top.value.equals("(") && bracket.equals(")")))) return false;
             }
         }
