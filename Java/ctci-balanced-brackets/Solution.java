@@ -60,7 +60,7 @@ public class Solution {
             } else {
                 //Then it's a closing bracket. If it doesn't pair with the top of the stack, fail
                 Node top = stack.pop();
-		if (top == null) return false;
+		        if (top == null) return false;
                 if (!((top.value.equals("[") && bracket.equals("]")) || (top.value.equals("{") && bracket.equals("}")) || (top.value.equals("(") && bracket.equals(")")))) return false;
             }
         }
@@ -77,4 +77,3 @@ public class Solution {
         }
     }
 }
-
