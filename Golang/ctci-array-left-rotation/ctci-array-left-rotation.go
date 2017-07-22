@@ -1,7 +1,8 @@
+//Refs: https://www.hackerrank.com/challenges/ctci-array-left-rotation
+
 package main
 import "os"
 import "bufio"
-//import "log"
 import "fmt"
 import "strconv"
 
