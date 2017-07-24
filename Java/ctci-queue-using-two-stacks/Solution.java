@@ -34,21 +34,23 @@ public class Solution {
 	    aNode.next = head;
 	    head = aNode;
         }
+
+	public boolean isEmpty() {
+	    if (head == null) return true;
+	    return false;
+	}
     }
     
     public class MyQueue<T> {
-	boolean inputMode; //if in inputMode, then elements are in inputStack
         Stack<T> inputStack;
         Stack<T> outputStack;
         
         public MyQueue() {
-	    inputMode = true;
             inputStack = new Stack<T>();
             outputStack = new Stack<T>();
         }
         
         public void enqueue(int value) {
-	    if (!inputMode) switchModes();
             Node<Integer> aNewNode = new Node<Integer>(new Integer(value));
             inputStack.push(aNewNode);
         }
@@ -62,35 +64,26 @@ public class Solution {
         }
         
         public Object peek(boolean dequeueRequested) {
-	    if (inputMode) switchModes();
+		if (inputStack.isEmpty() && outputStack.isEmpty()) return null;
 
-	    Object nextOut = null;
-	    if (outputStack.head != null) nextOut = outputStack.head.value;	
+		if (outputStack.isEmpty()) loadOutputStack();
 
-	    if (dequeueRequested) outputStack.pop();
+		Node someNode = outputStack.head;
 
-	    return nextOut;
+		if (dequeueRequested) outputStack.pop();
+
+		if (someNode == null) return null;
+		return someNode.value;
         }
       
-        private void switchModes() {
-		if (inputMode) {
-			//swap elements in to outputStack
-			Node someNode = inputStack.pop();
-			while (someNode != null) { 
-				outputStack.push(someNode);
-				someNode = inputStack.pop();
-			}
-			inputMode = false;
-		} else {
-			//swap elements in to inputStack
-			Node someNode = outputStack.pop();
-			while (someNode != null) {
-				inputStack.push(someNode);
-				someNode = outputStack.pop();
-			}
-			inputMode = true;
+	//assumes outputStack IS empty
+	private void loadOutputStack() {
+		Node someNode = inputStack.pop();
+		while (someNode != null) {
+			outputStack.push(someNode);
+			someNode = inputStack.pop();
 		}
-	}	
+	}
 
     }
 
