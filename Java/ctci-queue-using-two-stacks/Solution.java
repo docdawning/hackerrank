@@ -37,17 +37,20 @@ public class Solution {
     }
     
     public class MyQueue<T> {
-        Stack<T> mainStack;
-        Stack<T> tempStack;
+	boolean inputMode; //if in inputMode, then elements are in inputStack
+        Stack<T> inputStack;
+        Stack<T> outputStack;
         
         public MyQueue() {
-            mainStack = new Stack<T>();
-            tempStack = new Stack<T>();
+	    inputMode = true;
+            inputStack = new Stack<T>();
+            outputStack = new Stack<T>();
         }
         
         public void enqueue(int value) {
+	    if (!inputMode) switchModes();
             Node<Integer> aNewNode = new Node<Integer>(new Integer(value));
-            mainStack.push(aNewNode);
+            inputStack.push(aNewNode);
         }
         
         public Object dequeue() {
@@ -59,28 +62,35 @@ public class Solution {
         }
         
         public Object peek(boolean dequeueRequested) {
-	    log("peeking, dequeueRequested: "+dequeueRequested);
-            Node someNode = mainStack.pop();
-            while (someNode != null) {
-		log("Loading tempStack, got: "+someNode.value);
-                tempStack.push(someNode);
-                someNode = mainStack.pop();
-            }
-            
-            Node frontNode = tempStack.pop();
-            if (!dequeueRequested && frontNode != null) { mainStack.push(frontNode); }
-            
-            //put the nodes back in the mainStack
-            someNode = tempStack.pop();
-            while (someNode != null) {
-                mainStack.push(someNode);
-                someNode = tempStack.pop();
-            }
-            
-	    if (frontNode == null) return null;
-            return frontNode.value;
+	    if (inputMode) switchModes();
+
+	    Object nextOut = null;
+	    if (outputStack.head != null) nextOut = outputStack.head.value;	
+
+	    if (dequeueRequested) outputStack.pop();
+
+	    return nextOut;
         }
-        
+      
+        private void switchModes() {
+		if (inputMode) {
+			//swap elements in to outputStack
+			Node someNode = inputStack.pop();
+			while (someNode != null) { 
+				outputStack.push(someNode);
+				someNode = inputStack.pop();
+			}
+			inputMode = false;
+		} else {
+			//swap elements in to inputStack
+			Node someNode = outputStack.pop();
+			while (someNode != null) {
+				inputStack.push(someNode);
+				someNode = outputStack.pop();
+			}
+			inputMode = true;
+		}
+	}	
 
     }
 
