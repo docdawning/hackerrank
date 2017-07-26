@@ -1,4 +1,4 @@
-
+#Refs: https://www.hackerrank.com/challenges/python-string-formatting
 def print_formatted(number):
     width=len(bin(n)[2:].__str__())
     for i in range(1,number+1):
