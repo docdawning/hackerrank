@@ -1,8 +1,5 @@
 def print_rangoli(size):
 	import sys
-#    for i in range(1,size+1):
-#        sys.stdout.write(chr(ALPHABET_START_ASCII_INDEX_OFFSET+i)+"-")
-
 	for row in range(1,size+1):
 		print_rangoli_row(row, size)
 	for row in reversed(range(1, size)):
