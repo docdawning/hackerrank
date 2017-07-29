@@ -24,13 +24,13 @@ def print_rangoli_row(row, size):
 
 	rowString = ""
 	while (row > 0):
-		if (row != 5):
+		if (row != size):
 			if (rowString == ""):
 				rowString = getCharForSizeAndRow(size, row)
 			else:
 				rowString = getCharForSizeAndRow(size, row)+"-"+rowString+"-"+getCharForSizeAndRow(size, row)
 
-		if (row == 5):
+		if (row == size):
 			rowString = rowString[:len(rowString)/2] + "a" + rowString[len(rowString)/2:]
 	
 		row = row-1
