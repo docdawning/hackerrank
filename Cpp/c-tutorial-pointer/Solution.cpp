@@ -11,7 +11,7 @@ void update(int *a, int *b) {
 	*b = abs(aValue - bValue);
 }
 
-//Feeling rusty with points, this was to help me remember.
+//Feeling rusty with pointers, this was to help me remember.
 void swapValues(int *a,int *b) {
 	int temp = *a;
 	*a = *b;
