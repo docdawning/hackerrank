@@ -11,7 +11,7 @@ if [ -f "$BINARY_FILE" ] ; then
 	rm a.out
 fi
 
-g++ -stdlib=libc++ Solution.cpp
+g++ Solution.cpp
 if [ "$?" -eq 0 ] ; then 
 	cat $INPUT_FILE | ./$BINARY_FILE
 fi
