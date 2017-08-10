@@ -1,3 +1,5 @@
+//Refs: https://www.hackerrank.com/challenges/arrays-introduction
+
 #include <cmath>
 #include <cstdio>
 #include <vector>
