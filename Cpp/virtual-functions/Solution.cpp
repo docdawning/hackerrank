@@ -8,8 +8,54 @@
 using namespace std;
 
 /// start
+class Person {
+	protected:
+		string name;
+		int age;
+	public:
+		virtual void putdata() {}
+		virtual void getdata() {}
+};
 
+class Professor: public Person {
+	private:
+		int thisId;
+		int publications;
+	public:	
+		Professor() {
+			static int cur_id = 0;
+			thisId = ++cur_id;
+		}
+	
+		virtual void putdata() {
+			cout << name << " " << age << " " << publications << " " << thisId << endl;
+		}
 
+		virtual void getdata() {
+			cin >> name >> age >> publications;
+		}
+};
+
+class Student: public Person {
+	private:
+		int thisId;
+		int marks[6];
+	public:
+		Student() {
+			static int cur_id = 0;
+			thisId = ++cur_id;
+		}
+		virtual void putdata() {
+			int markSum = marks[0];
+			for (int i=1;i<=5;i++) markSum += marks[i];
+
+			cout << name << " " << age << " " << markSum << " " << thisId << endl;
+                }
+
+                virtual void getdata() {
+			cin >> name >> age >> marks[0] >> marks [1] >> marks[2] >> marks[3] >> marks[4] >> marks[5];
+                }
+};
 
 /// end
 
