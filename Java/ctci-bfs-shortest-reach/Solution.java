@@ -7,10 +7,10 @@ import java.util.*;
 
 public class Solution {
 	class Node {
-		public int id;
+		public Integer id;
 		public LinkedList<Node> neighbours;
 
-		public Node(int id) {
+		public Node(Integer id) {
 			this.id = id;
 			neighbours = new LinkedList<Node>();
 		}
@@ -28,19 +28,18 @@ public class Solution {
 
 	private static int EDGE_WEIGHT = 6;
 	HashMap<Integer,Node> nodeMap;
-	LinkedList<Integer> searchQueue;
 
 	public static void main(String[] args) {
 		Solution solution = new Solution();
 		solution.execute();
 	}
 
-	private Node getNode(int id) {
-		return nodeMap.get(new Integer(id));
+	private Node getNode(Integer id) {
+		return nodeMap.get(id);
 	}
 
 	//This is an undirected graph, so both nodes need to know of this connection
-	private void addEdge(int idA, int idB) {
+	private void addEdge(Integer idA, Integer idB) {
 		Node nodeA = getNode(idA);
 		Node nodeB = getNode(idB);
 		nodeA.neighbours.addLast(nodeB);
@@ -62,8 +61,8 @@ public class Solution {
 		int m = scanner.nextInt();
 
 		for (int i=1;i<=n;i++) {
-			Node newNode = new Node(i);
-			nodeMap.put(new Integer(i), newNode);
+			Node newNode = new Node(new Integer(i));
+			nodeMap.put(newNode.id, newNode);
 		}
 
 		for (int i=0;i<m;i++) {
@@ -72,43 +71,39 @@ public class Solution {
 
 		int idS = scanner.nextInt();
 
-		printShortestDistances(idS);
+		printShortestDistances(new Integer(idS));
 	}
 
 	//for each node in graph, print shortest distance to them, from s. -1 if there's no connection, skip mentioning self
-	private void printShortestDistances(int idS) {
+	private void printShortestDistances(Integer idS) {
 		Node nodeS = getNode(idS);
 		for (Node each : nodeMap.values()) {
-			if (each.id == idS) continue;
-
-			searchQueue = new LinkedList<Integer>();
-			int shortestDistance = getShortestDistanceBFS(nodeS, each);
-			System.out.print(shortestDistance+" ");
+			if (each.id.equals(idS)) continue;
+			System.out.print(getShortestDistanceBFS(nodeS, each)+" ");
 		}
 		System.out.println();
 	}
 
 	private int getShortestDistanceBFS(Node src, Node dest) {
 		LinkedList<SearchRecord> nextToVisit = new LinkedList<SearchRecord>();
-		HashSet<Integer> nodesVisited = new HashSet<Integer>();
-
 		nextToVisit.add(new SearchRecord(src, 0));
+		
+		HashSet<Integer> nodesVisited = new HashSet<Integer>();
 
 		while (!nextToVisit.isEmpty()) {
 			SearchRecord next = nextToVisit.removeFirst();
 
-			if (next.node.id == dest.id) {
+			if (next.node.id.equals(dest.id)) {
 				return EDGE_WEIGHT*next.depth;
 			}
 		
-			if (nodesVisited.contains(new Integer(next.node.id))) continue;
-			nodesVisited.add(new Integer(next.node.id));
+			if (nodesVisited.contains(next.node.id)) continue;
+			nodesVisited.add(next.node.id);
 	
 			//add neighbours of this node
 			for (Node neighbour : next.node.neighbours) {
 				nextToVisit.addLast(new SearchRecord(neighbour, next.depth+1));
 			}
-
 		}
 
 		return -1;
@@ -117,7 +112,7 @@ public class Solution {
 	private void addEdgeToGraph(Scanner scanner) {
 		int nodeAId = scanner.nextInt();
 		int nodeBId = scanner.nextInt();
-		addEdge(nodeAId, nodeBId);
-		//if (debugging) System.out.println("Added undirected edge between nodes "+nodeAId+" and "+nodeBId);
+		addEdge(new Integer(nodeAId), new Integer(nodeBId));
 	}
 }
+
