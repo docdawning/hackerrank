@@ -4,15 +4,35 @@
 import java.io.*;
 import java.util.*;
 
-
 public class Solution {
 	class Node {
 		public Integer id;
 		public LinkedList<Node> neighbours;
+		public HashMap<Integer,Integer> distances; //NodeID, Distance
 
 		public Node(Integer id) {
 			this.id = id;
 			neighbours = new LinkedList<Node>();
+			distances = new HashMap<Integer,Integer>();
+		}
+
+		//computes shortest distance to all other nodes. Also updates the other nodes' distance 
+		//map with the found distance, since this is an undirected graph
+		public void computeDistanceToNeighbours(HashMap<Integer,Node> nodeMap, Solution solution) {
+			//first all immediately adjacent neighbours should be directly considered
+			for (Node each : neighbours) {
+				distances.put(each.id, new Integer(Solution.EDGE_WEIGHT));
+				each.distances.put(this.id, new Integer(Solution.EDGE_WEIGHT));
+			}
+
+			//now use the BFS algorithm to find distance to others
+			for (Node each : nodeMap.values()) {
+				if (each.id.equals(this.id)) continue;
+				if (distances.get(each.id) != null) continue; //already computed
+				int distance = solution.getShortestDistanceBFS(this, each);
+				distances.put(each.id, new Integer(distance));
+				each.distances.put(this.id, new Integer(distance));
+			}
 		}
 	}
 
@@ -71,7 +91,16 @@ public class Solution {
 
 		int idS = scanner.nextInt();
 
+		computeAllDistances();
+
 		printShortestDistances(new Integer(idS));
+	}
+
+	private void computeAllDistances() {
+		for (Node each : nodeMap.values()) {
+			each.computeDistanceToNeighbours(nodeMap, this);
+		}
+
 	}
 
 	//for each node in graph, print shortest distance to them, from s. -1 if there's no connection, skip mentioning self
@@ -79,7 +108,8 @@ public class Solution {
 		Node nodeS = getNode(idS);
 		for (Node each : nodeMap.values()) {
 			if (each.id.equals(idS)) continue;
-			System.out.print(getShortestDistanceBFS(nodeS, each)+" ");
+			//System.out.print(getShortestDistanceBFS(nodeS, each)+" ");
+			System.out.print(nodeS.distances.get(each.id)+" ");
 		}
 		System.out.println();
 	}
