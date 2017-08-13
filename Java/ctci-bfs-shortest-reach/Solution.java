@@ -46,6 +46,7 @@ public class Solution {
 		}
 	}
 
+	private static final Integer negativeOneInteger = new Integer(-1);
 	private static int EDGE_WEIGHT = 6;
 	HashMap<Integer,Node> nodeMap;
 
@@ -91,7 +92,7 @@ public class Solution {
 
 		int idS = scanner.nextInt();
 
-		computeAllDistances();
+		//computeAllDistances();
 
 		printShortestDistances(new Integer(idS));
 	}
@@ -108,13 +109,15 @@ public class Solution {
 		Node nodeS = getNode(idS);
 		for (Node each : nodeMap.values()) {
 			if (each.id.equals(idS)) continue;
-			//System.out.print(getShortestDistanceBFS(nodeS, each)+" ");
-			System.out.print(nodeS.distances.get(each.id)+" ");
+			System.out.print(getShortestDistanceBFS(nodeS, each)+" ");
+			//System.out.print(nodeS.distances.get(each.id)+" ");
 		}
 		System.out.println();
 	}
 
 	private int getShortestDistanceBFS(Node src, Node dest) {
+		if (src.distances.get(dest.id) != null) return src.distances.get(dest.id).intValue();
+
 		LinkedList<SearchRecord> nextToVisit = new LinkedList<SearchRecord>();
 		nextToVisit.add(new SearchRecord(src, 0));
 		
@@ -125,6 +128,9 @@ public class Solution {
 
 			if (next.node.id.equals(dest.id)) {
 				int result = EDGE_WEIGHT*next.depth;
+				Integer resultInteger = new Integer(result);
+				src.distances.put(dest.id, resultInteger);
+				dest.distances.put(src.id, resultInteger);
 				return result;
 			}
 		
@@ -136,7 +142,9 @@ public class Solution {
 				nextToVisit.addLast(new SearchRecord(neighbour, next.depth+1));
 			}
 		}
-
+	
+		src.distances.put(dest.id, negativeOneInteger);	
+		dest.distances.put(src.id, negativeOneInteger);
 		return -1;
 	}
 
