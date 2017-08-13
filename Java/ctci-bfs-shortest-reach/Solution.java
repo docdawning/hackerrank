@@ -109,6 +109,7 @@ public class Solution {
 			if (each.id.equals(source)) continue;
 			int distance = dijkstraDistances[each.id.intValue()];
 			if (distance == Integer.MAX_VALUE) distance = -1;
+			if (distance < -1) distance = -1;
 			System.out.print(distance+" ");
 		}
 		System.out.println();
@@ -131,17 +132,20 @@ public class Solution {
 
 		while (!vertexQueue.isEmpty()) {
 			//u ← vertex in Q with min dist[u]
-			int minDist = Integer.MAX_VALUE; //an assumption, reasonable for our purposes
-			Node u = null;
+//			int minDist = Integer.MAX_VALUE; //an assumption, reasonable for our purposes
+//			Node u = null;
+			Node u = vertexQueue.getFirst();
+			int minDist = dist[u.id.intValue()];
 			for (Node vertex : vertexQueue) {
-				if (dist[vertex.id.intValue()] < minDist) u = vertex;
+				//if (dist[vertex.id.intValue()] < minDist) u = vertex;
+				if (dist[vertex.id.intValue()] < dist[u.id.intValue()]) u = vertex;
 			}
 			
 			//remove u from Q 
 			vertexQueue.remove(u);
 
 			//for each neighbor v of u:        
-			if (u == null) break;
+//			if (u == null) break;
 			for (Node v : u.neighbours) {
 				//if (vertexQueue.indexOf(v) < 0) continue;  // where v is still in Q.
 				
