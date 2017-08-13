@@ -47,7 +47,9 @@ public class Solution {
 	}
 
 	private static final Integer negativeOneInteger = new Integer(-1);
-	private static int EDGE_WEIGHT = 6;
+	private static final int INFINITY_DISTANCE = Integer.MAX_VALUE;
+	private static final int UNDEFINED_DISTANCE = -1;
+	private static final int EDGE_WEIGHT = 6;
 	HashMap<Integer,Node> nodeMap;
 
 	public static void main(String[] args) {
@@ -81,6 +83,7 @@ public class Solution {
 		int n = scanner.nextInt();
 		int m = scanner.nextInt();
 
+
 		for (int i=1;i<=n;i++) {
 			Node newNode = new Node(new Integer(i));
 			nodeMap.put(newNode.id, newNode);
@@ -91,10 +94,72 @@ public class Solution {
 		}
 
 		int idS = scanner.nextInt();
+		int[] dijkstraDistances = new int[n+1]; //these will only be relevant to idS
+		int[] dijkstraPreviousDistances = new int[n+1];
 
 		//computeAllDistances();
+		computeDistancesViaDijkstra(idS, dijkstraDistances, dijkstraPreviousDistances);
 
-		printShortestDistances(new Integer(idS));
+		//printShortestDistances(new Integer(idS));
+		printShortestDistances(new Integer(idS), dijkstraDistances);
+	}
+
+	private void printShortestDistances(Integer source, int[] dijkstraDistances) {
+		for (Node each : nodeMap.values()) {
+			if (each.id.equals(source)) continue;
+			int distance = dijkstraDistances[each.id.intValue()];
+			if (distance == Integer.MAX_VALUE) distance = -1;
+			System.out.print(distance+" ");
+		}
+		System.out.println();
+
+	}
+
+	//Much help from here: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Pseudocode
+	private void computeDistancesViaDijkstra(int source, int[] dist, int[] prev) {
+		LinkedList<Node> vertexQueue = new LinkedList<Node>();
+
+		//System.out.println("dist size is: "+dist.length);
+		for (Node vertex : nodeMap.values()) {
+			//System.out.println("initializing dist["+vertex.id.intValue()+"]");
+			dist[vertex.id.intValue()] = INFINITY_DISTANCE;		//Infinity
+			prev[vertex.id.intValue()] = UNDEFINED_DISTANCE; 	//Undefined
+			vertexQueue.add(vertex);
+		}
+
+		dist[source] = 0;
+
+		while (!vertexQueue.isEmpty()) {
+			//u ← vertex in Q with min dist[u]
+			int minDist = 1000000; //an assumption, not good for most cases
+			Node u = null;
+			for (Node vertex : vertexQueue) {
+				if (dist[vertex.id.intValue()] < minDist) u = vertex;
+			}
+			
+			//remove u from Q 
+			vertexQueue.remove(u);
+
+			//for each neighbor v of u:        
+			if (u == null) break;//System.out.println("u is null, vertexQueue.size(): "+vertexQueue.size());
+			for (Node neighbour : u.neighbours) {
+				if (vertexQueue.indexOf(neighbour) < 0) continue;  // where v is still in Q.
+				
+				//alt ← dist[u] + length(u, v)
+				int alt = dist[u.id.intValue()] + EDGE_WEIGHT;
+
+				//if alt < dist[v]:               // A shorter path to v has been found
+				if (alt < dist[neighbour.id.intValue()]) {
+					//dist[v] ← alt 
+					dist[neighbour.id.intValue()] = alt;
+	
+					//prev[v] ← u
+					prev[neighbour.id.intValue()] = u.id.intValue();
+				}
+			}
+
+		}
+			
 	}
 
 	private void computeAllDistances() {
@@ -109,8 +174,9 @@ public class Solution {
 		Node nodeS = getNode(idS);
 		for (Node each : nodeMap.values()) {
 			if (each.id.equals(idS)) continue;
+			System.out.println("Distance: "+nodeS.id+" & "+each.id);
 			System.out.print(getShortestDistanceBFS(nodeS, each)+" ");
-			//System.out.print(nodeS.distances.get(each.id)+" ");
+		//	System.out.print(nodeS.distances.get(each.id)+" ");
 		}
 		System.out.println();
 	}
