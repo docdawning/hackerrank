@@ -48,7 +48,7 @@ public class Solution {
 
 	private static final Integer negativeOneInteger = new Integer(-1);
 	private static final int INFINITY_DISTANCE = Integer.MAX_VALUE;
-	private static final int UNDEFINED_DISTANCE = -1;
+	private static final int UNDEFINED_DISTANCE = Integer.MAX_VALUE;
 	private static final int EDGE_WEIGHT = 6;
 	HashMap<Integer,Node> nodeMap;
 
@@ -131,7 +131,7 @@ public class Solution {
 
 		while (!vertexQueue.isEmpty()) {
 			//u ← vertex in Q with min dist[u]
-			int minDist = 1000000; //an assumption, not good for most cases
+			int minDist = Integer.MAX_VALUE; //an assumption, reasonable for our purposes
 			Node u = null;
 			for (Node vertex : vertexQueue) {
 				if (dist[vertex.id.intValue()] < minDist) u = vertex;
@@ -141,20 +141,20 @@ public class Solution {
 			vertexQueue.remove(u);
 
 			//for each neighbor v of u:        
-			if (u == null) break;//System.out.println("u is null, vertexQueue.size(): "+vertexQueue.size());
-			for (Node neighbour : u.neighbours) {
-				if (vertexQueue.indexOf(neighbour) < 0) continue;  // where v is still in Q.
+			if (u == null) break;
+			for (Node v : u.neighbours) {
+				//if (vertexQueue.indexOf(v) < 0) continue;  // where v is still in Q.
 				
 				//alt ← dist[u] + length(u, v)
 				int alt = dist[u.id.intValue()] + EDGE_WEIGHT;
 
 				//if alt < dist[v]:               // A shorter path to v has been found
-				if (alt < dist[neighbour.id.intValue()]) {
+				if (alt < dist[v.id.intValue()]) {
 					//dist[v] ← alt 
-					dist[neighbour.id.intValue()] = alt;
+					dist[v.id.intValue()] = alt;
 	
 					//prev[v] ← u
-					prev[neighbour.id.intValue()] = u.id.intValue();
+					prev[v.id.intValue()] = u.id.intValue();
 				}
 			}
 
