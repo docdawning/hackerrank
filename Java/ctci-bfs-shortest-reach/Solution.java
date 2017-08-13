@@ -8,45 +8,13 @@ public class Solution {
 	class Node {
 		public Integer id;
 		public LinkedList<Node> neighbours;
-		public HashMap<Integer,Integer> distances; //NodeID, Distance
 
 		public Node(Integer id) {
 			this.id = id;
 			neighbours = new LinkedList<Node>();
-			distances = new HashMap<Integer,Integer>();
-		}
-
-		//computes shortest distance to all other nodes. Also updates the other nodes' distance 
-		//map with the found distance, since this is an undirected graph
-		public void computeDistanceToNeighbours(HashMap<Integer,Node> nodeMap, Solution solution) {
-			//first all immediately adjacent neighbours should be directly considered
-			for (Node each : neighbours) {
-				distances.put(each.id, new Integer(Solution.EDGE_WEIGHT));
-				each.distances.put(this.id, new Integer(Solution.EDGE_WEIGHT));
-			}
-
-			//now use the BFS algorithm to find distance to others
-			for (Node each : nodeMap.values()) {
-				if (each.id.equals(this.id)) continue;
-				if (distances.get(each.id) != null) continue; //already computed
-				int distance = solution.getShortestDistanceBFS(this, each);
-				distances.put(each.id, new Integer(distance));
-				each.distances.put(this.id, new Integer(distance));
-			}
 		}
 	}
 
-	class SearchRecord {
-		Node node;
-		int depth;
-
-		SearchRecord(Node node, int depth) {
-			this.node = node;
-			this.depth = depth;
-		}
-	}
-
-	private static final Integer negativeOneInteger = new Integer(-1);
 	private static final int INFINITY_DISTANCE = Integer.MAX_VALUE;
 	private static final int UNDEFINED_DISTANCE = Integer.MAX_VALUE;
 	private static final int EDGE_WEIGHT = 6;
@@ -97,10 +65,8 @@ public class Solution {
 		int[] dijkstraDistances = new int[n+1]; //these will only be relevant to idS
 		int[] dijkstraPreviousDistances = new int[n+1];
 
-		//computeAllDistances();
 		computeDistancesViaDijkstra(idS, dijkstraDistances, dijkstraPreviousDistances);
 
-		//printShortestDistances(new Integer(idS));
 		printShortestDistances(new Integer(idS), dijkstraDistances);
 	}
 
@@ -120,9 +86,7 @@ public class Solution {
 	private void computeDistancesViaDijkstra(int source, int[] dist, int[] prev) {
 		LinkedList<Node> vertexQueue = new LinkedList<Node>();
 
-		//System.out.println("dist size is: "+dist.length);
 		for (Node vertex : nodeMap.values()) {
-			//System.out.println("initializing dist["+vertex.id.intValue()+"]");
 			dist[vertex.id.intValue()] = INFINITY_DISTANCE;		//Infinity
 			prev[vertex.id.intValue()] = UNDEFINED_DISTANCE; 	//Undefined
 			vertexQueue.add(vertex);
@@ -132,12 +96,9 @@ public class Solution {
 
 		while (!vertexQueue.isEmpty()) {
 			//u ← vertex in Q with min dist[u]
-//			int minDist = Integer.MAX_VALUE; //an assumption, reasonable for our purposes
-//			Node u = null;
 			Node u = vertexQueue.getFirst();
 			int minDist = dist[u.id.intValue()];
 			for (Node vertex : vertexQueue) {
-				//if (dist[vertex.id.intValue()] < minDist) u = vertex;
 				if (dist[vertex.id.intValue()] < dist[u.id.intValue()]) u = vertex;
 			}
 			
@@ -145,10 +106,7 @@ public class Solution {
 			vertexQueue.remove(u);
 
 			//for each neighbor v of u:        
-//			if (u == null) break;
 			for (Node v : u.neighbours) {
-				//if (vertexQueue.indexOf(v) < 0) continue;  // where v is still in Q.
-				
 				//alt ← dist[u] + length(u, v)
 				int alt = dist[u.id.intValue()] + EDGE_WEIGHT;
 
@@ -161,61 +119,7 @@ public class Solution {
 					prev[v.id.intValue()] = u.id.intValue();
 				}
 			}
-
 		}
-			
-	}
-
-	private void computeAllDistances() {
-		for (Node each : nodeMap.values()) {
-			each.computeDistanceToNeighbours(nodeMap, this);
-		}
-
-	}
-
-	//for each node in graph, print shortest distance to them, from s. -1 if there's no connection, skip mentioning self
-	private void printShortestDistances(Integer idS) {
-		Node nodeS = getNode(idS);
-		for (Node each : nodeMap.values()) {
-			if (each.id.equals(idS)) continue;
-			System.out.println("Distance: "+nodeS.id+" & "+each.id);
-			System.out.print(getShortestDistanceBFS(nodeS, each)+" ");
-		//	System.out.print(nodeS.distances.get(each.id)+" ");
-		}
-		System.out.println();
-	}
-
-	private int getShortestDistanceBFS(Node src, Node dest) {
-		if (src.distances.get(dest.id) != null) return src.distances.get(dest.id).intValue();
-
-		LinkedList<SearchRecord> nextToVisit = new LinkedList<SearchRecord>();
-		nextToVisit.add(new SearchRecord(src, 0));
-		
-		HashSet<Integer> nodesVisited = new HashSet<Integer>();
-
-		while (!nextToVisit.isEmpty()) {
-			SearchRecord next = nextToVisit.removeFirst();
-
-			if (next.node.id.equals(dest.id)) {
-				int result = EDGE_WEIGHT*next.depth;
-				Integer resultInteger = new Integer(result);
-				src.distances.put(dest.id, resultInteger);
-				dest.distances.put(src.id, resultInteger);
-				return result;
-			}
-		
-			if (nodesVisited.contains(next.node.id)) continue;
-			nodesVisited.add(next.node.id);
-	
-			//add neighbours of this node
-			for (Node neighbour : next.node.neighbours) {
-				nextToVisit.addLast(new SearchRecord(neighbour, next.depth+1));
-			}
-		}
-	
-		src.distances.put(dest.id, negativeOneInteger);	
-		dest.distances.put(src.id, negativeOneInteger);
-		return -1;
 	}
 
 	private void addEdgeToGraph(Scanner scanner) {
