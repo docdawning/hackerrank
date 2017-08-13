@@ -94,7 +94,8 @@ public class Solution {
 			SearchRecord next = nextToVisit.removeFirst();
 
 			if (next.node.id.equals(dest.id)) {
-				return EDGE_WEIGHT*next.depth;
+				int result = EDGE_WEIGHT*next.depth;
+				return result;
 			}
 		
 			if (nodesVisited.contains(next.node.id)) continue;
@@ -115,4 +116,5 @@ public class Solution {
 		addEdge(new Integer(nodeAId), new Integer(nodeBId));
 	}
 }
+
 
